@@ -1,0 +1,4 @@
+{
+  "User:alice@example.test": ["platform-readers"],
+  "User:bob@example.test": ["unrelated"]
+}

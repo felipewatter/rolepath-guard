@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77,<81", "wheel>=0.45,<1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rolepath-guard"
+version = "1.0.0"
+description = "Offline Kubernetes RBAC effective-permission and regression analyzer"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Felipe Watter"}]
+keywords = ["kubernetes", "rbac", "devsecops", "authorization", "sarif", "least-privilege"]
+dependencies = ["PyYAML>=6.0.2,<7"]
+classifiers = ["Programming Language :: Python :: 3", "Operating System :: OS Independent", "Topic :: Security"]
+
+[project.scripts]
+rolepath = "rolepath_guard.cli:main"
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10", "coverage>=7,<9", "build>=1,<2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["rolepath_guard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

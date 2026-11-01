@@ -1,0 +1,6 @@
+[
+  {"principal":"User:alice@example.test","verb":"get","resource":"configmaps","namespace":"apps"},
+  {"principal":"User:alice@example.test","verb":"get","resource":"secrets","namespace":"apps"},
+  {"principal":"User:alice@example.test","verb":"get","resource":"secrets","namespace":"other"},
+  {"principal":"ServiceAccount:monitoring:health-bot","verb":"get","non_resource_url":"/healthz"}
+]
