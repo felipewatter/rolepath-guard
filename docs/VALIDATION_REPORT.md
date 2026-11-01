@@ -1,6 +1,6 @@
 # RolePath Guard v1.0.0 — Local Validation Report
 
-**Validation date:** 2026-11-01 (UTC). **Status:** local verification complete; GitHub publication and remote CI pending creation of a new public `felipewatter/rolepath-guard` repository.
+**Validation date:** 2026-11-01 (UTC). **Status:** local verification complete. Remote CI and release status must be verified via the GitHub Actions and Releases links below; these are live external records.
 
 ## Verified locally
 
@@ -13,8 +13,8 @@
 | Wheel build | PASS: rolepath_guard-1.0.0-py3-none-any.whl |
 | Installed-wheel CLI smoke test | PASS: scan clean sample, assertions, SARIF serialization |
 | YAML workflow parse checks | PASS (structural local parsing; GitHub execution not yet performed) |
-| GitHub Actions Linux/Windows/macOS matrix | NOT RUN: no new repository exists yet |
-| GitHub release | NOT PUBLISHED: requires the repository and passing CI |
+| GitHub Actions Linux/Windows/macOS matrix | See the [live CI execution history](https://github.com/felipewatter/rolepath-guard/actions/workflows/ci.yml) for the latest outcome |
+| GitHub release | See [published releases](https://github.com/felipewatter/rolepath-guard/releases) and verify checksums and commit tags |
 
 ## Environment-specific caveat
 
@@ -26,4 +26,4 @@ The analyzer processes only local, bounded YAML/JSON RBAC manifests. It does not
 
 ## Notes
 
-The test log and coverage table accompany the deliverable. The archive and installed wheel checksums are published separately. This report must be refreshed with actual CI links and release details after remote publication.
+The test log and coverage table accompany the deliverable. The archive and installed wheel checksums are published separately. The local validation figures above describe the packaged v1.0.0 source. Always inspect the live GitHub CI conclusions and release artifacts before treating a remote build as verified.
