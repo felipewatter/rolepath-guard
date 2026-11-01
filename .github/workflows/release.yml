@@ -1,0 +1,44 @@
+name: Release v1.0.0 after CI
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: >-
+      ${{ github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.event == 'push' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_repository.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout validated commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Create first immutable version release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.0.0 --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo 'v1.0.0 already exists; leave it unchanged'
+            exit 0
+          fi
+          git archive --format=zip --prefix=rolepath-guard/ --output=rolepath-guard-v1.0.0.zip "$SHA"
+          sha256sum rolepath-guard-v1.0.0.zip > rolepath-guard-v1.0.0.zip.sha256
+          gh release create v1.0.0 \
+            rolepath-guard-v1.0.0.zip rolepath-guard-v1.0.0.zip.sha256 \
+            --repo "$GH_REPO" --target "$SHA" \
+            --title 'RolePath Guard v1.0.0 — Offline Kubernetes RBAC Policy Verification' \
+            --notes-file RELEASE_NOTES.md
