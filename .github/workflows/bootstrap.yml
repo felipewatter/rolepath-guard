@@ -1,0 +1,51 @@
+name: Verified one-time source import
+on:
+  push:
+    paths:
+      - '.github/workflows/bootstrap.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout staging repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Restore and validate source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 --decode .bootstrap/source.tar.xz.b64 > /tmp/rolepath-source.tar.xz
+          echo '4d5d6c2d7ba9a27593cfdc431dcb8f85bfa62d80657940d7d8598393d1f20148  /tmp/rolepath-source.tar.xz' | sha256sum --check
+          tar -tJf /tmp/rolepath-source.tar.xz > /tmp/rolepath-filelist.txt
+          if grep -E '(^/|(^|/)\.\./)' /tmp/rolepath-filelist.txt; then
+            echo 'Unsafe archive paths detected' >&2
+            exit 1
+          fi
+          tar -xJf /tmp/rolepath-source.tar.xz
+          rm -f .github/workflows/ci.yml .github/workflows/release.yml
+          rm -rf .bootstrap
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Verify imported code before commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -e '.[test]'
+          python -m compileall -q src tests
+          python -m unittest discover -s tests -v
+          rolepath assert --snapshot examples/baseline.yaml --groups examples/groups.json --checks examples/invariants.json
+          rolepath scan --snapshot examples/baseline.yaml --fail-on low
+      - name: Commit validated source to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat: publish RolePath Guard v1.0.0 source, documentation and tests'
+          git push origin HEAD:main
