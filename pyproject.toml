@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rolepath-guard"
-version = "1.0.0"
+version = "1.0.1"
 description = "Offline Kubernetes RBAC effective-permission and regression analyzer"
 readme = "README.md"
 requires-python = ">=3.11"
